@@ -4,5 +4,6 @@ import 'package:docx_mailmerge/docx_mailmerge.dart';
 
 void main() {
   final merge = DocxMailMerge(File('test/files/original1.docx').readAsBytesSync());
+  Directory('test/tmp').createSync();
   File('test/tmp/example.docx').writeAsBytesSync(merge.merge({'First_Name': 'hello world'}, removeEmpty: false));
 }

@@ -1,8 +1,4 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
+/// DocxMailMerge
 library docx_mailmerge;
 
 export 'src/docx_mailmerge_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.

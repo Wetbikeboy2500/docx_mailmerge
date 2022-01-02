@@ -12,3 +12,5 @@ pubspec.lock
 *.mdb
 
 test/tmp
+
+example/web/index.js*

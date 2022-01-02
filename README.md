@@ -1,39 +1,37 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Performs a mail merge operation on DOCX files. There are no platform dependant external dependencies which allows this package to run anywhere. Mail merge can also run in the browser!
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Merge values with merge fields within a DOCX document
+- Get merge fields a document contains
+- Evergy merge works on a fresh copy of the document
+    - Enables batch merging
+- Enable or disable proofreading on merged fields
+    - Proofreading is disabled on merged fields by default to better match behavior seen in Word
+- Enable or disable the removal of merge fields that do not have a corresponding key/value to merge with
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+This package reads files as bytes through the data structure of a `List<int>`. For web, this project has an example in the `/example/web` folder for your use (JS compiled separately)
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+To setup a document to be merged with, pass a `List<int>` of the file to the `DocxMailMerge` constructor.
 
 ```dart
-const like = 'sample';
+DocxMailMerge(File('test/files/original1.docx').readAsBytesSync())
 ```
+
+There is also a named constructor which will unzip and read the merge fields immediately rather than on demand.
+
+```dart
+DocxMailMerge.preprocess(File('test/files/original1.docx').readAsBytesSync())
+```
+
+
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
+TODO: Tell users more about the package: where to find more information, how to
+contribute to the package, how to file issues, what response they can expect
 from the package authors, and more.

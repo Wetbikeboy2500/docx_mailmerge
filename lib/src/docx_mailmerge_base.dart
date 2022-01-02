@@ -25,12 +25,14 @@ class DocxMailMerge {
 
   ///Create a DocxMailMerge and [decode] the raw file given
   DocxMailMerge.preprocess(this.docx) {
+    //TODO: This duplicates the work needed to be done for the second part of the preprocess stage for merge since merge will force it to run again. It would be good to have something like a _dirty flag to avoid duplicate work
     preprocess();
   }
 
   ///Preprocess the docx file given and identifies all the merge fields
   ///
   ///This sets-up the merge calls and that occur later
+  ///
   ///[force] Recreates the [documents] and [mergeFields]. These are modified when a merge is ran
   void preprocess({bool force = false}) {
     if (!_preprocessed) {
@@ -60,8 +62,11 @@ class DocxMailMerge {
   ///Does a merge on the fields defined in the [merge] keys with [merge]'s values
   ///
   ///[noProof] Have no proofchecking on the merged fields. Enabled by default as it reflects word's merge behavior
+  ///
   ///[removeEmpty] Merge fields with no matching keys in [merge] are removed.
-  ///This only modified the in-memory representation of the document
+  ///
+  ///This only modifies the in-memory representation of the document
+  ///
   ///The in-memory will be set to the original document when the merge is called to clear any past merge operations
   List<int> merge(Map<String, String> merge, {bool noProof = true, bool removeEmpty = true}) {
     preprocess(force: true);
