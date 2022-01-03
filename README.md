@@ -1,4 +1,4 @@
-Performs a mail merge operation on DOCX files. There are no platform dependant external dependencies which allows this package to run anywhere. Mail merge can also run in the browser!
+Performs a mail merge operation on DOCX files. There are no platform dependant external dependencies which allows this package to run anywhere. Mail merge can even run in the browser!
 
 ## Features
 
@@ -28,10 +28,18 @@ There is also a named constructor which will unzip and read the merge fields imm
 DocxMailMerge.preprocess(File('test/files/original1.docx').readAsBytesSync())
 ```
 
+The `mergeFieldNames` getter will return a `Set<String>` for the merge fields that exist in a document.
 
+```dart
+DocxMailMerge(File('test/files/original1.docx').readAsBytesSync()).mergeFieldNames
+```
+
+The merge operation takes a `Map<String, String>` for the key/values to be merged. There are also optional parameters which are documented in the code. The merge operation returns a `List<int>` which is the new file with the merged fields. Every merge operation reuses the original file and runs a merge on it allowing for repeat merge operations to be run on a single `DocxMailMerge` object without needing to create more.
+
+```dart
+DocxMailMerge(File('test/files/original1.docx').readAsBytesSync()).merge({'First_Name': 'hello world'}, removeEmpty: false)
+```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+This package comes from the issue of not having an easy cross-platform mailmerge package. This is inspired by the [docx-mailmerge](https://github.com/Bouke/docx-mailmerge) python package. The python package is more mature and may cover cases not yet addressed by this package, but this dart package does have an advantage. With the many different target platforms that dart can compile to, this package can be adopted easier into more ecosystems (Did i mention it can run in the browser?!).

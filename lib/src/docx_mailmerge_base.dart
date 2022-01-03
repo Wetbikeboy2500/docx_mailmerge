@@ -12,10 +12,10 @@ class DocxMailMerge {
   bool _preprocessed = false;
 
   ///The potential archive that the docx file extracts to
-  late Archive archive;
+  late Archive _archive;
 
   ///Stores the documents that merge fields could exist in
-  Map<String, XmlDocument> documents = {};
+  Map<String, XmlDocument> _documents = {};
 
   //Stores the merge field nodes from the documents that can be replaced
   List<NodeField> _mergeFields = [];
@@ -37,15 +37,15 @@ class DocxMailMerge {
   void preprocess({bool force = false}) {
     if (!_preprocessed) {
       //extract all the files in the archive
-      archive = ZipDecoder().decodeBytes(docx);
+      _archive = ZipDecoder().decodeBytes(docx);
     }
 
     if (!_preprocessed || force) {
       //get the documents that could have merge fields
-      documents = extractParts(archive);
+      _documents = extractParts(_archive);
       //Get all merge fields in the documents and add them to the list
       _mergeFields = [];
-      for (final entry in documents.entries) {
+      for (final entry in _documents.entries) {
         _mergeFields.addAll(getNodeFields(entry.value));
       }
     }
@@ -71,6 +71,6 @@ class DocxMailMerge {
   List<int> merge(Map<String, String> merge, {bool noProof = true, bool removeEmpty = true}) {
     preprocess(force: true);
     mergeNodeFields(_mergeFields, merge, noProof: noProof, removeEmpty: removeEmpty);
-    return mergeFiles(archive, documents);
+    return mergeFiles(_archive, _documents);
   }
 }
