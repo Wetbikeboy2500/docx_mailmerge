@@ -1,8 +1,10 @@
+//Keep this as first import
+import 'package:docx_mailmerge/docx_mailmerge.dart';
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
-import 'package:docx_mailmerge/docx_mailmerge.dart';
 import 'package:test/test.dart';
 import 'package:xml/xml.dart';
 

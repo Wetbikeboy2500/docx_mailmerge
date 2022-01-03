@@ -14,3 +14,7 @@ pubspec.lock
 test/tmp
 
 example/web/index.js*
+
+reports/
+
+coverage/
