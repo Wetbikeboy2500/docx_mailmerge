@@ -1,6 +1,6 @@
 name: docx_mailmerge
-description: Perform a mail merge operation on DOCX files
-version: 1.0.0
+description: Package for performing a mailmerge operation on merge fields within a DOCX document
+version: 1.0.1
 repository: https://github.com/Wetbikeboy2500/docx_mailmerge
 
 environment:
@@ -10,7 +10,7 @@ environment:
 dependencies:
   archive: ^3.1.6
   xml: ^5.3.1
-  commandline_splitter2: ^1.0.1
+  shlex: ^2.0.2
 
 dev_dependencies:
   lints: ^1.0.0

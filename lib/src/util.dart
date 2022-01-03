@@ -25,4 +25,3 @@ class NodeFields {
 
   const NodeFields(this.elements, this.fields);
 }
-

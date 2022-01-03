@@ -1,3 +1,4 @@
+[![pub package](https://img.shields.io/pub/v/docx_mailmerge.svg)](https://pub.dev/packages/docx_mailmerge)
 [![Build](https://github.com/Wetbikeboy2500/docx_mailmerge/actions/workflows/build.yml/badge.svg)](https://github.com/Wetbikeboy2500/docx_mailmerge/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/Wetbikeboy2500/docx_mailmerge/branch/master/graph/badge.svg?token=0BRNYQPEJK)](https://codecov.io/gh/Wetbikeboy2500/docx_mailmerge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

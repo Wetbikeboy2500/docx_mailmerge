@@ -73,7 +73,7 @@ void main() {
       final m = DocxMailMerge.preprocess(content);
       expect(mergeFields2.keys.toSet(), equals(m.mergeFieldNames));
     });
-    
+
     test('3', () {
       final file = File('test/files/original3.docx');
       final content = file.readAsBytesSync();
@@ -82,7 +82,7 @@ void main() {
     });
   });
 
-  //NOTE: These always fail due to differents/lack-of ids for elements. Looking at the diff for the xml does show that the merge fields do reflect how the merge should be like 
+  //NOTE: These always fail due to differents/lack-of ids for elements. Looking at the diff for the xml does show that the merge fields do reflect how the merge should be like
   group('Merge file', () {
     test('1', () {
       final content = File('test/files/original1.docx').readAsBytesSync();
@@ -94,7 +94,9 @@ void main() {
       final newOutput = ZipDecoder().decodeBytes(output);
       File('test/tmp/output1.docx').writeAsBytesSync(output);
       expect(merged.equals(newOutput), isTrue);
-    }, skip:  'There are random trackers/markers that cannot be replicated to create an exact outcome of a regular mail merge');
+    },
+        skip:
+            'There are random trackers/markers that cannot be replicated to create an exact outcome of a regular mail merge');
 
     test('2', () {
       final content = File('test/files/original2.docx').readAsBytesSync();
@@ -109,11 +111,42 @@ void main() {
       for (final file in files) {
         final alt = newOutput.findFile(file.name);
         if (alt != null && file.name != '[Content_Types].xml') {
-          expect(XmlDocument.parse(Utf8Decoder().convert(alt.content)).toXmlString(pretty: true), equals(XmlDocument.parse(Utf8Decoder().convert(file.content)).toXmlString(pretty: true)));
+          expect(XmlDocument.parse(Utf8Decoder().convert(alt.content)).toXmlString(pretty: true),
+              equals(XmlDocument.parse(Utf8Decoder().convert(file.content)).toXmlString(pretty: true)));
         }
       }
       expect(merged.equals(newOutput), isTrue);
-    }, skip: 'There are random trackers/markers that cannot be replicated to create an exact outcome of a regular mail merge');
+    },
+        skip:
+            'There are random trackers/markers that cannot be replicated to create an exact outcome of a regular mail merge');
+
+    ///Tests against previous merge output
+    ///
+    ///This ensures that no changes occur without changing the test files themselves
+    test('1 Previous output', () {
+      final content = File('test/files/original1.docx').readAsBytesSync();
+      //run merge with no changes
+      final m = DocxMailMerge(content);
+      final output = m.merge(mergeFields1);
+      //get into a workable format
+      final merged = ZipDecoder().decodeBytes(File('test/files/original1_output.docx').readAsBytesSync());
+      final newOutput = ZipDecoder().decodeBytes(output);
+      expect(merged.equals(newOutput), isTrue);
+    });
+
+    ///Tests against previous merge output
+    ///
+    ///This ensures that no changes occur without changing the test files themselves
+    test('2 Previous output', () {
+      final content = File('test/files/original2.docx').readAsBytesSync();
+      //run merge with no changes
+      final m = DocxMailMerge(content);
+      final output = m.merge(mergeFields2);
+      //get into a workable format
+      final merged = ZipDecoder().decodeBytes(File('test/files/original2_output.docx').readAsBytesSync());
+      final newOutput = ZipDecoder().decodeBytes(output);
+      expect(merged.equals(newOutput), isTrue);
+    });
   });
 }
 

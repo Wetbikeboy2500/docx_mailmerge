@@ -3,8 +3,8 @@
 import 'dart:convert';
 
 import 'package:archive/archive.dart';
-import 'package:commandline_splitter2/commandline_splitter2.dart';
 import 'package:docx_mailmerge/src/util.dart';
+import 'package:shlex/shlex.dart';
 import 'package:xml/xml.dart';
 import 'constants.dart';
 
@@ -190,7 +190,6 @@ List<int> mergeFiles(Archive archive, Map<String, XmlDocument> documents) {
 }
 
 void mergeNodeFields(List<NodeField> nodes, Map<String, String> merge, {bool noProof = true, bool removeEmpty = true}) {
-
   //skip NodeField if not in merge to avoid any changes
   if (!removeEmpty) {
     nodes.removeWhere((element) => !merge.containsKey(element.field));
@@ -248,7 +247,7 @@ void mergeNodeFields(List<NodeField> nodes, Map<String, String> merge, {bool noP
           }
           //replace for the first node
           first.replace(builder.buildFragment());
-        } else if (removeEmpty) { 
+        } else if (removeEmpty) {
           //remove everything
           for (int i = 0; i < node.elements.length; i++) {
             parent.children.remove(node.elements[i]);
