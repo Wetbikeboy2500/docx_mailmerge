@@ -19,13 +19,10 @@ void main(List<String> args) {
   }).map((e) => "import 'package:docx_mailmerge/${e.replaceFirst('lib/', '')}';");
   final File testFile = File('test/docx_mailmerge_test.dart');
   final List<String> lines = testFile.readAsLinesSync();
-  final int index = lines.indexWhere((element) => element.startsWith('import \'package:docx_mailmerge'));
-  if (index == -1) {
-    print('No import to replace');
-    return;
-  }
-  lines.insertAll(index, paths);
-  lines.removeAt(index + paths.length);
+
+  lines.removeWhere((line) => line.startsWith('import \'package:docx_mailmerge'));
+
+  lines.insertAll(0, paths);
 
   Directory('coverage').createSync();
 

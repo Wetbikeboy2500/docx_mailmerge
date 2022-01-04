@@ -1,6 +1,6 @@
 name: docx_mailmerge
 description: Package for performing a mailmerge operation on merge fields within a DOCX document
-version: 1.0.1
+version: 1.0.2
 repository: https://github.com/Wetbikeboy2500/docx_mailmerge
 
 environment:

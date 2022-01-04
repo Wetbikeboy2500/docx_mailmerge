@@ -1,10 +1,13 @@
-//Keep this as first import
+// ignore_for_file: avoid_print
+
 import 'package:docx_mailmerge/docx_mailmerge.dart';
 
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:docx_mailmerge/src/helpers.dart';
+import 'package:docx_mailmerge/src/util.dart';
 import 'package:test/test.dart';
 import 'package:xml/xml.dart';
 
@@ -31,6 +34,16 @@ const mergeFields2 = {
 };
 
 void main() {
+  setUp(() {
+    DocxMailMerge.verbose = true;
+  });
+
+  group('util', () {
+    test('log', () {
+      log('Testing');
+    });
+  });
+
   group('Decompress and compress without any changes', () {
     test('1', () {
       final file = File('test/files/original1.docx');
@@ -146,6 +159,44 @@ void main() {
       final merged = ZipDecoder().decodeBytes(File('test/files/original2_output.docx').readAsBytesSync());
       final newOutput = ZipDecoder().decodeBytes(output);
       expect(merged.equals(newOutput), isTrue);
+    });
+
+    test('1 Nothing', () {
+      final content = File('test/files/original1.docx').readAsBytesSync();
+      //run merge with no changes
+      final m = DocxMailMerge(content);
+      final output = m.merge({}, removeEmpty: false);
+      //get into a workable format
+      final merged = ZipDecoder().decodeBytes(content);
+      final newOutput = ZipDecoder().decodeBytes(output);
+      expect(merged.equals(newOutput), isTrue);
+    });
+
+    test('2 Nothing', () {
+      final content = File('test/files/original2.docx').readAsBytesSync();
+      //run merge with no changes
+      final m = DocxMailMerge(content);
+      final output = m.merge({}, removeEmpty: false);
+      //get into a workable format
+      final merged = ZipDecoder().decodeBytes(content);
+      final newOutput = ZipDecoder().decodeBytes(output);
+      expect(merged.equals(newOutput), isTrue);
+    });
+
+    test('Merge node fields empty', () {
+      final builder = XmlBuilder();
+      builder.element('r', nest: () {
+        builder.element('t');
+      });
+
+      final f = builder.buildFragment();
+
+      final parent = f.childElements.elementAt(0);
+      final child = parent.childElements.elementAt(0);
+
+      mergeNodeFields([NodeField([child], 'test')], {}, removeEmpty: true);
+
+      expect(parent.childElements, isEmpty);
     });
   });
 }

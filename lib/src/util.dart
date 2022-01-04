@@ -1,15 +1,5 @@
+import 'package:docx_mailmerge/docx_mailmerge.dart';
 import 'package:xml/xml.dart';
-
-extension StringStrip on String {
-  ///Removes a pattern if it happens at the start and end of a string
-  String strip(String str) {
-    if (startsWith(str) && endsWith(str)) {
-      return substring(str.length, length - str.length);
-    }
-
-    return this;
-  }
-}
 
 ///Represents all nodes that create a merge field
 class NodeField {
@@ -19,9 +9,18 @@ class NodeField {
   const NodeField(this.elements, this.field);
 }
 
+///Represent consecutive nodes that have merged together
 class NodeFields {
   final List<XmlNode> elements;
   final List<String> fields;
 
   const NodeFields(this.elements, this.fields);
+}
+
+///Prints message if package is set to verbose
+void log(Object? value) {
+  if (DocxMailMerge.verbose) {
+    // ignore: avoid_print
+    print(value);
+  }
 }

@@ -69,7 +69,7 @@ List<NodeField> getSimpleFields(XmlDocument document) {
     final String? instr = field.getAttribute('instr', namespace: NS.w);
     if (instr != null) {
       //split instr like a shell-like command
-      Iterable<String> args = split(instr).map((e) => e.strip('"'));
+      Iterable<String> args = split(instr);
       //check if merge field exists
       if (args.length > 1 && args.elementAt(0) == 'MERGEFIELD') {
         //add field name to the set
@@ -106,7 +106,7 @@ List<NodeField> getComplexFields(XmlDocument document) {
     //begin text run
     XmlNode? currentNode = field.parent;
     if (currentNode == null) {
-      print('No parent to begin');
+      log('No parent to begin');
       continue;
     }
     elements.add(currentNode);
@@ -114,20 +114,20 @@ List<NodeField> getComplexFields(XmlDocument document) {
     //instr text run
     currentNode = currentNode.nextSibling;
     if (currentNode == null) {
-      print('No sibling to start');
+      log('No sibling to start');
       continue;
     }
     //get instr
     XmlElement? instruction = currentNode.getElement('instrText', namespace: NS.w);
     if (instruction == null) {
-      print('Sibling did not have instr');
+      log('Sibling did not have instr');
       continue;
     }
     elements.add(currentNode);
     //get the merge field
-    Iterable<String> args = split(instruction.text.trim()).map((e) => e.strip('"'));
+    Iterable<String> args = split(instruction.text.trim());
     if (args.isEmpty || args.length < 2 || args.elementAt(0) != 'MERGEFIELD') {
-      print('Args or mergefield instr issue');
+      log('Args or mergefield instr issue');
       continue;
     }
     //get field name
@@ -138,7 +138,7 @@ List<NodeField> getComplexFields(XmlDocument document) {
     if (currentNode == null ||
         currentNode.getElement('fldChar', namespace: NS.w)?.getAttribute('fldCharType', namespace: NS.w) !=
             'separate') {
-      print('separate not found');
+      log('separate not found');
       continue;
     }
     elements.add(currentNode);
@@ -161,13 +161,14 @@ List<NodeField> getComplexFields(XmlDocument document) {
     if (end) {
       nodeFields.add(NodeField(elements, fieldName));
     } else {
-      print('Could not find complex field\'s end');
+      log('Could not find complex field\'s end');
     }
   }
 
   return nodeFields;
 }
 
+///Merges an archive with the documents that have been modified
 List<int> mergeFiles(Archive archive, Map<String, XmlDocument> documents) {
   final Archive a = Archive();
 
@@ -189,6 +190,13 @@ List<int> mergeFiles(Archive archive, Map<String, XmlDocument> documents) {
   return ZipEncoder().encode(a) ?? [];
 }
 
+///Runs merges on the given nodes
+///
+///[merge] key/value pair for the fields to be merged with their given value
+///
+///[noProof] Adds noProof, which disables proofreading, on merged fields
+///
+///[removeEmpty] Whether empty merge fields, ones that don't match anything in [merge], should be removed or not
 void mergeNodeFields(List<NodeField> nodes, Map<String, String> merge, {bool noProof = true, bool removeEmpty = true}) {
   //skip NodeField if not in merge to avoid any changes
   if (!removeEmpty) {

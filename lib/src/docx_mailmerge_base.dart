@@ -8,6 +8,9 @@ class DocxMailMerge {
   ///Stores the original document file
   final List<int> docx;
 
+  ///Whether messages will be printed
+  static bool verbose = false;
+
   //TODO: add a preprocess fail state to fail softly
   bool _preprocessed = false;
 

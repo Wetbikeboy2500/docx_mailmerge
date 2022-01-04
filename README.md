@@ -45,6 +45,12 @@ The merge operation takes a `Map<String, String>` for the key/values to be merge
 DocxMailMerge(File('test/files/original1.docx').readAsBytesSync()).merge({'First_Name': 'hello world'}, removeEmpty: false)
 ```
 
+Messages are not outputted by this package unless verbose is set to true. This can be set through the static variable `verbose`
+
+```dart
+DocxMailMerge.verbose = true;
+```
+
 ## Additional information
 
 This package comes from the issue of not having an easy cross-platform mailmerge package. This is inspired by the [docx-mailmerge](https://github.com/Bouke/docx-mailmerge) python package. The python package is more mature and may cover cases not yet addressed by this package, but this dart package does have an advantage. With the many different target platforms that dart can compile to, this package can be adopted easier into more ecosystems (Did i mention it can run in the browser?!).
