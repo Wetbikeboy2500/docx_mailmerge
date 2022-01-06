@@ -1,3 +1,7 @@
+## 1.0.2+1
+
+- Added extra check for no parent for a complex field
+
 ## 1.0.2
 
 - Messages will only print when verbose is true

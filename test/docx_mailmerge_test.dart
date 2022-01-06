@@ -206,7 +206,7 @@ void main() {
 
     ///For all the issues that can occur with a complex field
     group('Imcomplete Complex Field', () {
-      test('parent', () {
+      test('no parent', () {
         final builder = XmlBuilder();
 
         builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w, nest: () {
@@ -219,7 +219,7 @@ void main() {
         expect(getComplexFields(f), isEmpty);
       });
 
-      test('sibling', () {
+      test('no sibling', () {
         final builder = XmlBuilder();
 
         builder.element('document', nest: () {
@@ -244,9 +244,7 @@ void main() {
           builder.element('r', namespace: NS.w, nest: () {
             builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
           });
-          builder.element('r', namespace: NS.w, nest: () {
-            builder.element('instrText', namespace: NS.w);
-          });
+          builder.element('r', namespace: NS.w);
         });
 
         final f = builder.buildDocument();
