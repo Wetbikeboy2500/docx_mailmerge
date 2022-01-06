@@ -105,7 +105,7 @@ List<NodeField> getComplexFields(XmlDocument document) {
     //moves through "states" begin -> instr -> separate -> [nodes] -> end
     //begin text run
     XmlNode? currentNode = field.parent;
-    if (currentNode == null) {
+    if (currentNode == null || currentNode is XmlDocument) {
       log('No parent to begin');
       continue;
     }

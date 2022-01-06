@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:docx_mailmerge/src/constants.dart';
 import 'package:docx_mailmerge/src/helpers.dart';
 import 'package:docx_mailmerge/src/util.dart';
 import 'package:test/test.dart';
@@ -182,7 +183,9 @@ void main() {
       final newOutput = ZipDecoder().decodeBytes(output);
       expect(merged.equals(newOutput), isTrue);
     });
+  });
 
+  group('Helpers', () {
     test('Merge node fields empty', () {
       final builder = XmlBuilder();
       builder.element('r', nest: () {
@@ -194,9 +197,122 @@ void main() {
       final parent = f.childElements.elementAt(0);
       final child = parent.childElements.elementAt(0);
 
-      mergeNodeFields([NodeField([child], 'test')], {}, removeEmpty: true);
+      mergeNodeFields([
+        NodeField([child], 'test')
+      ], {}, removeEmpty: true);
 
       expect(parent.childElements, isEmpty);
+    });
+
+    ///For all the issues that can occur with a complex field
+    group('Imcomplete Complex Field', () {
+      test('parent', () {
+        final builder = XmlBuilder();
+
+        builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w, nest: () {
+          builder.namespace(NS.w, 'w');
+          builder.namespace(NS.ct, 'ct');
+          builder.namespace(NS.mc, 'mc');
+        });
+
+        final f = builder.buildDocument();
+        expect(getComplexFields(f), isEmpty);
+      });
+
+      test('sibling', () {
+        final builder = XmlBuilder();
+
+        builder.element('document', nest: () {
+          builder.namespace(NS.w, 'w');
+          builder.namespace(NS.ct, 'ct');
+          builder.namespace(NS.mc, 'mc');
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+          });
+        });
+
+        final f = builder.buildDocument();
+        expect(getComplexFields(f), isEmpty);
+      });
+      test('sibling no instr', () {
+        final builder = XmlBuilder();
+
+        builder.element('document', nest: () {
+          builder.namespace(NS.w, 'w');
+          builder.namespace(NS.ct, 'ct');
+          builder.namespace(NS.mc, 'mc');
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+          });
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('instrText', namespace: NS.w);
+          });
+        });
+
+        final f = builder.buildDocument();
+        expect(getComplexFields(f), isEmpty);
+      });
+      test('sibling instr issue', () {
+        final builder = XmlBuilder();
+
+        builder.element('document', nest: () {
+          builder.namespace(NS.w, 'w');
+          builder.namespace(NS.ct, 'ct');
+          builder.namespace(NS.mc, 'mc');
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+          });
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('instrText', attributes: {'w:instr': ''}, namespace: NS.w);
+          });
+        });
+
+        final f = builder.buildDocument();
+        expect(getComplexFields(f), isEmpty);
+      });
+      test('no separate', () {
+        final builder = XmlBuilder();
+
+        builder.element('document', nest: () {
+          builder.namespace(NS.w, 'w');
+          builder.namespace(NS.ct, 'ct');
+          builder.namespace(NS.mc, 'mc');
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+          });
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('instrText', namespace: NS.w, nest: () {
+              builder.text('MERGEFIELD "name"');
+            });
+          });
+        });
+
+        final f = builder.buildDocument();
+        expect(getComplexFields(f), isEmpty);
+      });
+      test('no end', () {
+        final builder = XmlBuilder();
+
+        builder.element('document', nest: () {
+          builder.namespace(NS.w, 'w');
+          builder.namespace(NS.ct, 'ct');
+          builder.namespace(NS.mc, 'mc');
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+          });
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('instrText', namespace: NS.w, nest: () {
+              builder.text('MERGEFIELD "name"');
+            });
+          });
+          builder.element('r', namespace: NS.w, nest: () {
+            builder.element('fldChar', attributes: {'w:fldCharType': 'separate'}, namespace: NS.w);
+          });
+        });
+
+        final f = builder.buildDocument();
+        expect(getComplexFields(f), isEmpty);
+      });
     });
   });
 }
