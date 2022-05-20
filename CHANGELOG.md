@@ -1,3 +1,8 @@
+## 1.0.3
+
+- Updated to lints 2.0.0
+- Allow to use major version 5 or 6 of the xml package
+
 ## 1.0.2+1
 
 - Added extra check for no parent for a complex field
