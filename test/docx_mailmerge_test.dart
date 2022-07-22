@@ -183,6 +183,52 @@ void main() {
       final newOutput = ZipDecoder().decodeBytes(output);
       expect(merged.equals(newOutput), isTrue);
     });
+
+    //TODO: test when the tab character id the first thing
+    test('Tab Character', () {
+      /* Example:
+        <w:p>
+            <w:r>
+                <w:rPr>
+                    <w:noProof/>
+                </w:rPr>
+                <w:t>hello</w:t>
+            </w:r>
+            <w:r>
+                <w:rPr>
+                    <w:noProof/>
+                </w:rPr>
+                <w:tab/>
+                <w:t>world</w:t>
+            </w:r>
+        </w:p>
+      */
+    });
+    test('Carriage Return/Line Feed', () {
+      /* Example:
+        <w:p>
+            <w:pPr>
+                <w:rPr>
+                    <w:noProof/>
+                </w:rPr>
+            </w:pPr>
+            <w:r>
+                <w:rPr>
+                    <w:noProof/>
+                </w:rPr>
+                <w:t xml:space="preserve">hello </w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:rPr>
+                    <w:noProof/>
+                </w:rPr>
+                <w:t>world</w:t>
+            </w:r>
+        </w:p>
+      */
+    });
   });
 
   group('Helpers', () {

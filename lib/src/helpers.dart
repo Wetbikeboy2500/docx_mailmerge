@@ -223,38 +223,16 @@ void mergeNodeFields(List<NodeField> nodes, Map<String, String> merge, {bool noP
       XmlNode first = node.elements.first;
       XmlNode? parent = node.elements.first.parent;
       if (parent != null) {
-        var builder = XmlBuilder();
-        //add namespaces
-        builder.namespace(NS.w, 'w');
-        builder.namespace(NS.ct, 'ct');
-        builder.namespace(NS.mc, 'mc');
-
-        //build the text thing
-        bool hasOne = false;
-        builder.element('r', namespace: NS.w, nest: () {
-          if (noProof) {
-            builder.element('rPr', namespace: NS.w, nest: () {
-              builder.element('noProof', namespace: NS.w);
-            });
-          }
-          builder.element('t', namespace: NS.w, nest: () {
-            for (final field in node.fields) {
-              if (merge.containsKey(field)) {
-                hasOne = true;
-                builder.text(merge[field]!);
-              }
-            }
-          });
-        });
+        final buildResponse = buildOutput(merge, node, noProof);
 
         //require one field to be merged with to make the changes
-        if (hasOne) {
+        if (buildResponse.hasAtleastOneFieldMerged) {
           //remove all other nodes except the first
           for (int i = 1; i < node.elements.length; i++) {
             parent.children.remove(node.elements[i]);
           }
           //replace for the first node
-          first.replace(builder.buildFragment());
+          first.replace(buildResponse.builder.buildFragment());
         } else if (removeEmpty) {
           //remove everything
           for (int i = 0; i < node.elements.length; i++) {
@@ -264,4 +242,81 @@ void mergeNodeFields(List<NodeField> nodes, Map<String, String> merge, {bool noP
       }
     }
   }
+}
+
+///Defines the reponse of the build output operation
+class BuildOutputResponse {
+  final bool hasAtleastOneFieldMerged;
+  final XmlBuilder builder;
+
+  const BuildOutputResponse(this.builder, this.hasAtleastOneFieldMerged);
+}
+
+final startsOrEndsWithWhiteSpace = RegExp(r'(^\s)|(\s$)');
+
+///Builds an XML element that should be merged into the document
+///
+///This handles the cases of special characters and other logic
+BuildOutputResponse buildOutput(Map<String, String> mergeFields, NodeFields node, bool noProof) {
+  final builder = XmlBuilder();
+  //add namespaces
+  builder.namespace(NS.w, 'w');
+  builder.namespace(NS.ct, 'ct');
+  builder.namespace(NS.mc, 'mc');
+
+  //build the text element to be added
+  bool hasOne = false;
+
+  //separate the text by the paragraphs they need to represent
+  final List<String> paragraphText = [];
+
+  for (final field in node.fields) {
+    if (mergeFields.containsKey(field)) {
+      hasOne = true;
+      final String text = mergeFields[field]!;
+
+      //if text contains return character
+      if (text.contains('\r\n')) {
+        paragraphText.addAll(text.split('\r\n'));
+      } else if (text.contains('\n')) {
+        paragraphText.addAll(text.split('\n'));
+      } else {
+        paragraphText.add(text);
+      }
+    }
+  }
+
+  //TODO: support returing paragraphs which needs to have aditional context awareness
+
+  for (final paragraph in paragraphText) {
+    List<String> texts = [];
+
+    if (paragraph.contains('\t')) {
+      texts.addAll(paragraph.split('\t'));
+    } else {
+      texts.add(paragraph);
+    }
+
+    //create regular run
+    builder.element('r', namespace: NS.w, nest: () {
+      if (noProof) {
+        builder.element('rPr', namespace: NS.w, nest: () {
+          builder.element('noProof', namespace: NS.w);
+        });
+      }
+      builder.element('t', namespace: NS.w, nest: () {
+        final String first = texts.first;
+        if (startsOrEndsWithWhiteSpace.hasMatch(first)) {
+          //apply preseve
+        }
+        builder.text(texts.first);
+      });
+    });
+
+    for (final text in texts.skip(1)) {
+      //build the other text runs but with a tab character after noProof
+    }
+  }
+
+  return BuildOutputResponse(builder, hasOne);
 }
