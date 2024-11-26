@@ -22,7 +22,9 @@ void main() {
           'Company_Name': 'test3',
         });
         final content = base64Encode(result);
-        AnchorElement(href: "data:application/octet-stream;charset=utf-16le;base64,$content")
+        AnchorElement(
+            href:
+                "data:application/octet-stream;charset=utf-16le;base64,$content")
           ..setAttribute("download", "merged.docx")
           ..click();
       });

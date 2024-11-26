@@ -71,9 +71,11 @@ class DocxMailMerge {
   ///This only modifies the in-memory representation of the document
   ///
   ///The in-memory will be set to the original document when the merge is called to clear any past merge operations
-  List<int> merge(Map<String, String> merge, {bool noProof = true, bool removeEmpty = true}) {
+  List<int> merge(Map<String, String> merge,
+      {bool noProof = true, bool removeEmpty = true}) {
     preprocess(force: true);
-    mergeNodeFields(_mergeFields, merge, noProof: noProof, removeEmpty: removeEmpty);
+    mergeNodeFields(_mergeFields, merge,
+        noProof: noProof, removeEmpty: removeEmpty);
     return mergeFiles(_archive, _documents);
   }
 }

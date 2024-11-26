@@ -96,7 +96,7 @@ void main() {
     });
   });
 
-  //NOTE: These always fail due to differents/lack-of ids for elements. Looking at the diff for the xml does show that the merge fields do reflect how the merge should be like
+  //NOTE: These always fail due to differences/lack-of ids for elements. Looking at the diff for the xml does show that the merge fields do reflect how the merge should be like
   group('Merge file', () {
     test('1', () {
       final content = File('test/files/original1.docx').readAsBytesSync();
@@ -104,7 +104,8 @@ void main() {
       final m = DocxMailMerge(content);
       final output = m.merge(mergeFields1);
       //get into a workable format
-      final merged = ZipDecoder().decodeBytes(File('test/files/original1_full_merge.docx').readAsBytesSync());
+      final merged = ZipDecoder().decodeBytes(
+          File('test/files/original1_full_merge.docx').readAsBytesSync());
       final newOutput = ZipDecoder().decodeBytes(output);
       File('test/tmp/output1.docx').writeAsBytesSync(output);
       expect(merged.equals(newOutput), isTrue);
@@ -118,15 +119,20 @@ void main() {
       final m = DocxMailMerge(content);
       final output = m.merge(mergeFields2);
       //get into a workable format
-      final merged = ZipDecoder().decodeBytes(File('test/files/original2_full_merge.docx').readAsBytesSync());
+      final merged = ZipDecoder().decodeBytes(
+          File('test/files/original2_full_merge.docx').readAsBytesSync());
       final newOutput = ZipDecoder().decodeBytes(output);
       File('test/tmp/output2.docx').writeAsBytesSync(output);
-      final files = merged.files.where((element) => element.name.endsWith('.xml'));
+      final files =
+          merged.files.where((element) => element.name.endsWith('.xml'));
       for (final file in files) {
         final alt = newOutput.findFile(file.name);
         if (alt != null && file.name != '[Content_Types].xml') {
-          expect(XmlDocument.parse(Utf8Decoder().convert(alt.content)).toXmlString(pretty: true),
-              equals(XmlDocument.parse(Utf8Decoder().convert(file.content)).toXmlString(pretty: true)));
+          expect(
+              XmlDocument.parse(Utf8Decoder().convert(alt.content))
+                  .toXmlString(pretty: true),
+              equals(XmlDocument.parse(Utf8Decoder().convert(file.content))
+                  .toXmlString(pretty: true)));
         }
       }
       expect(merged.equals(newOutput), isTrue);
@@ -143,7 +149,8 @@ void main() {
       final m = DocxMailMerge(content);
       final output = m.merge(mergeFields1);
       //get into a workable format
-      final merged = ZipDecoder().decodeBytes(File('test/files/original1_output.docx').readAsBytesSync());
+      final merged = ZipDecoder().decodeBytes(
+          File('test/files/original1_output.docx').readAsBytesSync());
       final newOutput = ZipDecoder().decodeBytes(output);
       expect(merged.equals(newOutput), isTrue);
     });
@@ -157,7 +164,8 @@ void main() {
       final m = DocxMailMerge(content);
       final output = m.merge(mergeFields2);
       //get into a workable format
-      final merged = ZipDecoder().decodeBytes(File('test/files/original2_output.docx').readAsBytesSync());
+      final merged = ZipDecoder().decodeBytes(
+          File('test/files/original2_output.docx').readAsBytesSync());
       final newOutput = ZipDecoder().decodeBytes(output);
       expect(merged.equals(newOutput), isTrue);
     });
@@ -205,11 +213,12 @@ void main() {
     });
 
     ///For all the issues that can occur with a complex field
-    group('Imcomplete Complex Field', () {
+    group('Incomplete Complex Field', () {
       test('no parent', () {
         final builder = XmlBuilder();
 
-        builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w, nest: () {
+        builder.element('fldChar',
+            attributes: {'w:fldCharType': 'begin'}, namespace: NS.w, nest: () {
           builder.namespace(NS.w, 'w');
           builder.namespace(NS.ct, 'ct');
           builder.namespace(NS.mc, 'mc');
@@ -227,7 +236,8 @@ void main() {
           builder.namespace(NS.ct, 'ct');
           builder.namespace(NS.mc, 'mc');
           builder.element('r', namespace: NS.w, nest: () {
-            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+            builder.element('fldChar',
+                attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
           });
         });
 
@@ -242,7 +252,8 @@ void main() {
           builder.namespace(NS.ct, 'ct');
           builder.namespace(NS.mc, 'mc');
           builder.element('r', namespace: NS.w, nest: () {
-            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+            builder.element('fldChar',
+                attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
           });
           builder.element('r', namespace: NS.w);
         });
@@ -258,10 +269,12 @@ void main() {
           builder.namespace(NS.ct, 'ct');
           builder.namespace(NS.mc, 'mc');
           builder.element('r', namespace: NS.w, nest: () {
-            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+            builder.element('fldChar',
+                attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
           });
           builder.element('r', namespace: NS.w, nest: () {
-            builder.element('instrText', attributes: {'w:instr': ''}, namespace: NS.w);
+            builder.element('instrText',
+                attributes: {'w:instr': ''}, namespace: NS.w);
           });
         });
 
@@ -276,7 +289,8 @@ void main() {
           builder.namespace(NS.ct, 'ct');
           builder.namespace(NS.mc, 'mc');
           builder.element('r', namespace: NS.w, nest: () {
-            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+            builder.element('fldChar',
+                attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
           });
           builder.element('r', namespace: NS.w, nest: () {
             builder.element('instrText', namespace: NS.w, nest: () {
@@ -296,7 +310,8 @@ void main() {
           builder.namespace(NS.ct, 'ct');
           builder.namespace(NS.mc, 'mc');
           builder.element('r', namespace: NS.w, nest: () {
-            builder.element('fldChar', attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
+            builder.element('fldChar',
+                attributes: {'w:fldCharType': 'begin'}, namespace: NS.w);
           });
           builder.element('r', namespace: NS.w, nest: () {
             builder.element('instrText', namespace: NS.w, nest: () {
@@ -304,7 +319,8 @@ void main() {
             });
           });
           builder.element('r', namespace: NS.w, nest: () {
-            builder.element('fldChar', attributes: {'w:fldCharType': 'separate'}, namespace: NS.w);
+            builder.element('fldChar',
+                attributes: {'w:fldCharType': 'separate'}, namespace: NS.w);
           });
         });
 

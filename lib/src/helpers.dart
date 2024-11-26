@@ -1,4 +1,4 @@
-//This file contains a lot of funational code. This allows for testing and abstracting the different processes involved with merge fields
+//This file contains a lot of functional code. This allows for testing and abstracting the different processes involved with merge fields
 
 import 'dart:convert';
 
@@ -22,11 +22,13 @@ XmlDocument _decodeRawXML(List<int> content) {
 ///Returns the path name along with the xml needed to be parsed
 Map<String, XmlDocument> extractParts(Archive archive) {
   //Load in content types to identify the needed xml files to manipulate
-  final ArchiveFile contentTypes = archive.files.firstWhere((file) => file.name == '[Content_Types].xml');
+  final ArchiveFile contentTypes =
+      archive.files.firstWhere((file) => file.name == '[Content_Types].xml');
 
   //decode the main content types to get the file paths that can be used
   final XmlDocument doc = decodeArchiveFile(contentTypes);
-  final Iterable<XmlElement> elements = doc.findAllElements('Override', namespace: NS.ct);
+  final Iterable<XmlElement> elements =
+      doc.findAllElements('Override', namespace: NS.ct);
   //get the names/directories in the archive for the headers, body, and footer of the doc
   final Map<String, XmlDocument> parts = {};
   for (final element in elements) {
@@ -40,7 +42,8 @@ Map<String, XmlDocument> extractParts(Archive archive) {
           partName = partName.substring(1);
         }
 
-        parts[partName] = _decodeRawXML(archive.files.firstWhere((file) => partName == file.name).content);
+        parts[partName] = _decodeRawXML(
+            archive.files.firstWhere((file) => partName == file.name).content);
       }
     }
   }
@@ -62,7 +65,8 @@ List<NodeField> getNodeFields(XmlDocument document) {
 List<NodeField> getSimpleFields(XmlDocument document) {
   List<NodeField> nodeFields = [];
   //get simple fields
-  Iterable<XmlElement> fields = document.findAllElements('fldSimple', namespace: NS.w);
+  Iterable<XmlElement> fields =
+      document.findAllElements('fldSimple', namespace: NS.w);
   //go through each element
   for (final field in fields) {
     //get specific attribute with the field name
@@ -84,10 +88,12 @@ List<NodeField> getSimpleFields(XmlDocument document) {
 List<NodeField> getComplexFields(XmlDocument document) {
   List<NodeField> nodeFields = [];
 
-  Iterable<XmlElement> fields = document.findAllElements('fldChar', namespace: NS.w);
+  Iterable<XmlElement> fields =
+      document.findAllElements('fldChar', namespace: NS.w);
 
   //Get only the beginning nodes
-  fields = fields.where((element) => element.getAttribute('fldCharType', namespace: NS.w) == 'begin');
+  fields = fields.where((element) =>
+      element.getAttribute('fldCharType', namespace: NS.w) == 'begin');
 
   //get complex fields
   //http://officeopenxml.com/WPfields.php
@@ -118,14 +124,15 @@ List<NodeField> getComplexFields(XmlDocument document) {
       continue;
     }
     //get instr
-    XmlElement? instruction = currentNode.getElement('instrText', namespace: NS.w);
+    XmlElement? instruction =
+        currentNode.getElement('instrText', namespace: NS.w);
     if (instruction == null) {
       log('Sibling did not have instr');
       continue;
     }
     elements.add(currentNode);
     //get the merge field
-    Iterable<String> args = split(instruction.text.trim());
+    Iterable<String> args = split(instruction.innerText.trim());
     if (args.isEmpty || args.length < 2 || args.elementAt(0) != 'MERGEFIELD') {
       log('Args or mergefield instr issue');
       continue;
@@ -136,7 +143,9 @@ List<NodeField> getComplexFields(XmlDocument document) {
     //separate
     currentNode = currentNode.nextSibling;
     if (currentNode == null ||
-        currentNode.getElement('fldChar', namespace: NS.w)?.getAttribute('fldCharType', namespace: NS.w) !=
+        currentNode
+                .getElement('fldChar', namespace: NS.w)
+                ?.getAttribute('fldCharType', namespace: NS.w) !=
             'separate') {
       log('separate not found');
       continue;
@@ -150,7 +159,10 @@ List<NodeField> getComplexFields(XmlDocument document) {
     while (currentNode != null) {
       elements.add(currentNode);
 
-      if (currentNode.getElement('fldChar', namespace: NS.w)?.getAttribute('fldCharType', namespace: NS.w) == 'end') {
+      if (currentNode
+              .getElement('fldChar', namespace: NS.w)
+              ?.getAttribute('fldCharType', namespace: NS.w) ==
+          'end') {
         end = true;
         break;
       }
@@ -197,19 +209,24 @@ List<int> mergeFiles(Archive archive, Map<String, XmlDocument> documents) {
 ///[noProof] Adds noProof, which disables proofreading, on merged fields
 ///
 ///[removeEmpty] Whether empty merge fields, ones that don't match anything in [merge], should be removed or not
-void mergeNodeFields(List<NodeField> nodes, Map<String, String> merge, {bool noProof = true, bool removeEmpty = true}) {
+void mergeNodeFields(List<NodeField> nodes, Map<String, String> merge,
+    {bool noProof = true, bool removeEmpty = true}) {
   //skip NodeField if not in merge to avoid any changes
   if (!removeEmpty) {
     nodes.removeWhere((element) => !merge.containsKey(element.field));
   }
 
   //merge NodeFields together so they are in the same text element
-  List<NodeFields> nodeFields = nodes.map((e) => NodeFields(e.elements, [e.field])).toList();
+  List<NodeFields> nodeFields =
+      nodes.map((e) => NodeFields(e.elements, [e.field])).toList();
   List<NodeFields> mergedNodes = [];
   while (nodeFields.isNotEmpty) {
     //keep merging sibling nodes
-    if (nodeFields.length > 1 && nodeFields[1].elements.first == nodeFields.first.elements.last.nextSibling) {
-      nodeFields[0] = NodeFields([...nodeFields.first.elements, ...nodeFields[1].elements],
+    if (nodeFields.length > 1 &&
+        nodeFields[1].elements.first ==
+            nodeFields.first.elements.last.nextSibling) {
+      nodeFields[0] = NodeFields(
+          [...nodeFields.first.elements, ...nodeFields[1].elements],
           [...nodeFields.first.fields, ...nodeFields[1].fields]);
       nodeFields.removeAt(1);
     } else {

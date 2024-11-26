@@ -1,3 +1,11 @@
+## 2.0.0
+
+- Minimum Dart 3.0.0
+- Updated to lints 5.0.0
+- Updated to xml 6.0.0
+  - Fixed deprecation warning
+- Formatting and spelling fixes
+
 ## 1.0.3
 
 - Updated to lints 2.0.0

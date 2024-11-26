@@ -1,4 +1,4 @@
 /// DocxMailMerge
-library docx_mailmerge;
+library;
 
 export 'src/docx_mailmerge_base.dart';

@@ -9,7 +9,7 @@ Performs a mail merge operation on DOCX files. There are no platform dependant e
 
 - Merge values with merge fields within a DOCX document
 - Get merge fields a document contains
-- Evergy merge works on a fresh copy of the document
+- Every merge works on a fresh copy of the document
     - Enables batch merging
 - Enable or disable proofreading on merged fields
     - Proofreading is disabled on merged fields by default to better match behavior seen in Word
