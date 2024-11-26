@@ -40,12 +40,6 @@ jobs:
       # want to change this to 'flutter test'.
       - name: Run tests and code coverage
         run: dart run coverage:test_with_coverage
-
-      - uses: dorny/test-reporter@v1
-        with:
-          name: Dart Tests
-          path: ./reports/tests.json
-          reporter: dart-json
         
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
